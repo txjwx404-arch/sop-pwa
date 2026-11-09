@@ -245,7 +245,7 @@ ${showInstall?`<div class="install-banner">
     <div class="big" onclick="if(confirm('确认清空全部练习记录？')){S.m={};S.totalOk=0;save();goHome();toast('已重置')}">重置记录</div>
     <div class="big" onclick="showAbout()">关于 / 安装</div>
     <div class="big" onclick="dmFlip()">${dmLabel()}</div>
-    <div class="big empty">待添加</div>
+    <div class="big" onclick="showCalc()">透析计算器</div>
     <div class="big empty">待添加</div>
     <div class="big empty">待添加</div>
   </div>
@@ -447,5 +447,42 @@ if('serviceWorker' in navigator){
 goHome();
 </script>
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<style>
+.cin{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;background:var(--card);color:var(--text);box-sizing:border-box}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.clab{font-size:12.5px;color:var(--muted,#8a97a0);display:block;margin-bottom:4px}
+.cbtn{width:100%;padding:11px;border:0;border-radius:10px;background:var(--primary,#0b6e8a);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.cres{margin-top:10px;font-size:14.5px;line-height:1.9;display:none}
+.chip{display:inline-block;padding:1px 9px;border-radius:20px;font-size:12.5px;font-weight:600;color:#fff;margin-left:6px}
+</style>
+<script>
+function gv(id){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v}
+function chip(lv,txt){var c=lv===0?"#1a9c6e":lv===1?"#d4920a":"#e05a3c";return '<span class="chip" style="background:'+c+'">'+txt+'</span>'}
+function showRes(id,html){var e=document.getElementById(id);e.style.display="block";e.innerHTML=html}
+function fUF(pre,dry,h,inn){var ml=(pre-dry)*1000+inn;return{ml:ml,ufr:ml/h/dry,pct:(pre-dry)/pre*100}}
+function fKtV(pre,post,t,uf,w){var R=post/pre;return{urr:(1-R)*100,sp:-Math.log(R-0.008*t)+(4-3.5*R)*uf/w}}
+function fCa(ca,alb,p){var corr=ca+0.02*(40-alb);return{corr:corr,prod:corr*4.0*(p*3.1)}}
+function fCit(qb,target,conc){return qb*60*target/conc}
+function fld(id,lab,ph,val){return '<div><label class="clab">'+lab+'</label><input class="cin" id="'+id+'" type="number" inputmode="decimal" step="any" placeholder="'+ph+'"'+(val?' value="'+val+'"':'')+'></div>'}
+function calcCard(title,fields,btn,fn,resid){return '<div class="card"><div class="sec">'+title+'</div><div class="crow">'+fields+'</div><button class="cbtn" onclick="'+fn+'()">'+btn+'</button><div class="cres" id="'+resid+'"></div></div>'}
+function showCalc(){
+  setHead('透析计算器',true);
+  var h='';
+  h+=calcCard('① 超滤量与超滤率', fld('uf_pre','透前体重 (kg)','如 68.5')+fld('uf_dry','干体重 (kg)','如 65')+fld('uf_h','透析时长 (h)','如 4')+fld('uf_in','额外进量 (mL)','冲管/饮水/输液，可空'), '计算超滤','cUF','r_uf');
+  h+=calcCard('② 透析充分性 Kt/V · URR', fld('kt_pre','透前尿素 (mmol/L)','')+fld('kt_post','透后尿素 (mmol/L)','')+fld('kt_t','透析时长 (h)','如 4')+fld('kt_uf','超滤量 (L)','如 2')+fld('kt_w','透后体重 (kg)','如 60'), '计算 Kt/V','cKtV','r_kt');
+  h+=calcCard('③ 校正钙 · 钙磷乘积', fld('ca_ca','血钙 (mmol/L)','')+fld('ca_alb','白蛋白 (g/L)','')+fld('ca_p','血磷 (mmol/L)',''), '计算校正钙','cCa','r_ca');
+  h+=calcCard('④ 转铁蛋白饱和度 TSAT', fld('ts_fe','血清铁 (µmol/L)','')+fld('ts_tibc','总铁结合力 (µmol/L)',''), '计算 TSAT','cTSAT','r_ts');
+  h+=calcCard('⑤ 消毒液稀释配制', fld('dl_c1','原液浓度 (%)','如 5')+fld('dl_c2','目标浓度 (%)','如 0.5')+fld('dl_v2','要配总量 (mL)','如 10000'), '计算配比','cDil','r_dl');
+  h+=calcCard('⑥ CRRT 剂量 · 枸橼酸配速', fld('cr_wt','体重 (kg)','')+fld('cr_dose','目标剂量 (mL/kg/h)','','25')+fld('cr_rep','置换液 (mL/h)','可空')+fld('cr_dial','透析液 (mL/h)','可空')+fld('cr_qb','血流量 (mL/min)','算枸橼酸时填')+fld('cr_cc','枸橼酸溶液浓度 (mmol/L)','4%枸橼酸钠≈136','136'), '计算 CRRT','cCRRT','r_cr');
+  h+='<div class="foot">计算结果仅供临床参考，处方与治疗参数请结合医嘱复核。</div>';
+  app.innerHTML=h;
+}
+function cUF(){var pre=gv('uf_pre'),dry=gv('uf_dry'),h=gv('uf_h'),inn=gv('uf_in')||0;if(pre===null||dry===null||h===null||h<=0||dry<=0){toast('请把体重和时长填完整');return}var r=fUF(pre,dry,h,inn);if(r.ml<0){showRes('r_uf','透前体重低于干体重，请核对数字。');return}var lv=r.ufr>13?2:r.ufr>10?1:0;var tx=r.ufr>13?'过快：与不良预后相关，建议延长透析时间或分次脱水':r.ufr>10?'偏快：注意血压与耐受':'平稳';showRes('r_uf','计划脱水：<b>'+(r.ml/1000).toFixed(2)+' L</b>（'+Math.round(r.ml)+' mL）<br>超滤率：<b>'+r.ufr.toFixed(1)+' mL/kg/h</b>'+chip(lv,tx)+'<br>脱水占透前体重：'+r.pct.toFixed(1)+'%')}
+function cKtV(){var pre=gv('kt_pre'),post=gv('kt_post'),t=gv('kt_t'),uf=gv('kt_uf'),w=gv('kt_w');if(pre===null||post===null||t===null||uf===null||w===null||w<=0){toast('请把五项都填完整');return}if(post/pre-0.008*t<=0){showRes('r_kt','数值异常：透后/透前比值过低，请核对尿素单位与数字。');return}var r=fKtV(pre,post,t,uf,w);var lv=r.sp>=1.4?0:r.sp>=1.2?1:2;var tx=r.sp>=1.4?'达目标值':r.sp>=1.2?'达最低交付剂量，未达目标':'不达标';var lv2=r.urr>=70?0:r.urr>=65?1:2;var tx2=r.urr>=70?'达标':r.urr>=65?'达最低线':'不达标';showRes('r_kt','spKt/V：<b>'+r.sp.toFixed(2)+'</b>'+chip(lv,tx)+'<br>URR：<b>'+r.urr.toFixed(0)+'%</b>'+chip(lv2,tx2)+'<br><small>参考：spKt/V 最低 1.2、目标 1.4；URR 最低 65%、目标 70%。</small>')}
+function cCa(){var ca=gv('ca_ca'),alb=gv('ca_alb'),p=gv('ca_p');if(ca===null||alb===null||p===null){toast('请把三项都填完整');return}var r=fCa(ca,alb,p);var lv=r.prod<55?0:r.prod<=70?1:2;var tx=r.prod<55?'达标（＜55）':r.prod<=70?'偏高':'过高';var lv2=(r.corr>=2.10&&r.corr<=2.37)?0:1;showRes('r_ca','校正钙：<b>'+r.corr.toFixed(2)+' mmol/L</b>'+chip(lv2,lv2===0?'常用目标 2.10–2.37':'不在 2.10–2.37 区间')+'<br>钙磷乘积：<b>'+r.prod.toFixed(0)+' mg²/dL²</b>'+chip(lv,tx))}
+function cTSAT(){var fe=gv('ts_fe'),tibc=gv('ts_tibc');if(fe===null||tibc===null||tibc<=0){toast('请把两项填完整');return}var v=fe/tibc*100;var lv=v<20?1:v<=50?0:1;var tx=v<20?'偏低：提示铁缺乏':v<=50?'常用目标区间':'偏高：注意铁负荷';showRes('r_ts','TSAT：<b>'+v.toFixed(0)+'%</b>'+chip(lv,tx))}
+function cDil(){var c1=gv('dl_c1'),c2=gv('dl_c2'),v2=gv('dl_v2');if(c1===null||c2===null||v2===null||c1<=0){toast('请把三项填完整');return}if(c2>=c1){showRes('r_dl','目标浓度不低于原液浓度，无法用水稀释得到，请核对。');return}var stock=c2*v2/c1;showRes('r_dl','取原液：<b>'+Math.round(stock)+' mL</b><br>加水：<b>'+Math.round(v2-stock)+' mL</b><br><small>合计 '+(Math.round(stock)+Math.round(v2-stock))+' mL ≈ 目标 '+v2+' mL。</small>')}
+function cCRRT(){var wt=gv('cr_wt'),dose=gv('cr_dose');if(wt===null||dose===null||wt<=0){toast('请先填体重和目标剂量');return}var tot=wt*dose;var out='总废液流量（剂量换算）：<b>'+Math.round(tot)+' mL/h</b>';var rep=gv('cr_rep'),dial=gv('cr_dial');if(rep!==null||dial!==null){var net=tot-(rep||0)-(dial||0);out+='<br>净超滤（总 − 置换 − 透析液）：<b>'+Math.round(net)+' mL/h</b>'}var qb=gv('cr_qb'),cc=gv('cr_cc');if(qb!==null&&cc!==null&&cc>0){out+='<br>枸橼酸流量（目标血浓度 3 mmol/L）：<b>'+Math.round(fCit(qb,3,cc))+' mL/h</b>'}showRes('r_cr',out)}
+</script>
 </body>
 </html>
