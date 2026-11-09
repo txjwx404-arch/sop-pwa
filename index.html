@@ -206,20 +206,6 @@ ${showInstall?`<div class="install-banner">
   <div class="sec">我的岗位 ${offlineTag}</div>
   <div class="roles">${['医生','护士','技师','全部'].map(r=>`<div class="role ${S.role===r?'on':''}" onclick="S.role='${r}';save();goHome()">${r}</div>`).join('')}</div>
 </div>
-<div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <span class="sec" style="margin:0">学习进度</span>
-    ${S.streak?`<span class="streak">🔥 连续${S.streak}天</span>`:''}
-  </div>
-  <div class="stat">
-    <div><b>${P.length}</b><span>本岗题量</span></div>
-    <div><b>${done}</b><span>已练习</span></div>
-    <div><b>${ok}</b><span>已掌握</span></div>
-    <div><b>${wrong}</b><span>错题</span></div>
-  </div>
-  <div class="bar" style="margin-top:12px"><i style="width:${pct}%"></i></div>
-  <div class="tip" style="text-align:center">掌握率 ${pct}%</div>
-</div>
 <div class="menu">
   <button class="c1" onclick="daily()">📅 每日十题<small>优先错题与未做</small></button>
   <button class="c3" onclick="run(pool().filter(x=>S.m[x.id]===2),'错题本')">❌ 错题本<small>${wrong} 题待攻克</small></button>
@@ -249,6 +235,20 @@ ${showInstall?`<div class="install-banner">
     <div class="big empty">待添加</div>
     <div class="big empty">待添加</div>
   </div>
+</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <span class="sec" style="margin:0">学习进度</span>
+    ${S.streak?`<span class="streak">🔥 连续${S.streak}天</span>`:''}
+  </div>
+  <div class="stat">
+    <div><b>${P.length}</b><span>本岗题量</span></div>
+    <div><b>${done}</b><span>已练习</span></div>
+    <div><b>${ok}</b><span>已掌握</span></div>
+    <div><b>${wrong}</b><span>错题</span></div>
+  </div>
+  <div class="bar" style="margin-top:12px"><i style="width:${pct}%"></i></div>
+  <div class="tip" style="text-align:center">掌握率 ${pct}%</div>
 </div>
 <div class="foot">依据：国家卫健委《血液净化标准操作规程（2021版）》<br>进度保存在本机 · 支持离线使用 · PWA 可安装到主屏幕</div>`;
 }
