@@ -1,0 +1,25 @@
+{
+  "name": "血液净化SOP应知应会1000题",
+  "short_name": "血透SOP刷题",
+  "description": "国家卫健委《血液净化标准操作规程（2021版）》应知应会1000题",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b6e8a",
+  "theme_color": "#0b6e8a",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
