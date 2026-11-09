@@ -98,6 +98,24 @@ mark{background:#ffe08a;color:#1a2332;border-radius:2px;padding:0 1px}
   <button onclick="openSearch()" aria-label="搜索">🔍</button>
 </header>
 <div style="background:#fdf6e0;border-bottom:1px solid #ead9a0;color:#6b5a1e;font-size:12.5px;line-height:1.6;padding:8px 0;overflow:hidden;white-space:nowrap"><span style="display:inline-block;padding-left:100%;animation:sopmq 22s linear infinite">学习交流题库：依据国家卫健委《血液净化标准操作规程（2021版）》整理生成，非官方发布；答案如有错漏以原著为准，不构成诊疗或操作依据。</span></div><style>@keyframes sopmq{from{transform:translateX(0)}to{transform:translateX(-100%)}}@media (prefers-reduced-motion:reduce){span[style*="sopmq"]{animation:none!important;padding-left:0!important}}</style>
+<style>
+#dmLayer{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden;z-index:15}
+.dmspan{position:absolute;left:0;white-space:nowrap;font-size:13px;font-weight:600;color:var(--primary,#0b6e8a);opacity:.5;text-shadow:0 1px 2px rgba(255,255,255,.85);animation-name:dmfly;animation-timing-function:linear;will-change:transform}
+@keyframes dmfly{from{transform:translateX(100vw)}to{transform:translateX(calc(-100vw - 100%))}}
+</style>
+<div id="dmLayer" style="display:none"></div>
+<script>
+var DM_ITEMS=["透析液细菌＜100 CFU/mL，内毒素＜0.5 EU/mL","透析用水细菌每月查，内毒素每3个月查，频率别颠倒","上机前双人查对，参数与医嘱一致","自检未通过不上机，先通知技术人员","手卫生是感控的第一道防线","HDF＝弥散＋对流，清除中分子更强","低血压第一步：先停超滤","封管先回抽，看纱布上有没有血块","导管回血不畅，严禁强行推注","枸橼酸抗凝，别忘了算碱负荷","干体重靠评估，不靠猜","错题本里的题，才是最该刷的题","每日十题，贵在坚持","依据国家卫健委《血液净化标准操作规程（2021版）》","应知应会1000题，刷完就是底气","加油，今天也要稳稳上机"];
+var DM_LANES=[92,124,156,188];
+var dmIdx=0,dmTimer=null;
+function dmOn(){try{return localStorage.getItem("sopqa_dm")!=="0"}catch(e){return true}}
+function dmLabel(){return dmOn()?"弹幕：开":"弹幕：关"}
+function dmSpawn(){var l=document.getElementById("dmLayer");if(!l||l.style.display==="none")return;var sp=document.createElement("span");sp.className="dmspan";sp.textContent=DM_ITEMS[dmIdx%DM_ITEMS.length];dmIdx++;sp.style.top=DM_LANES[Math.floor(Math.random()*DM_LANES.length)]+"px";sp.style.animationDuration=(11+Math.random()*6)+"s";sp.addEventListener("animationend",function(){sp.remove()});l.appendChild(sp)}
+function dmStart(){if(dmTimer)return;dmSpawn();dmTimer=setInterval(dmSpawn,2600)}
+function dmStop(){if(dmTimer){clearInterval(dmTimer);dmTimer=null}var l=document.getElementById("dmLayer");if(l)l.innerHTML=""}
+function dmSync(home){var l=document.getElementById("dmLayer");if(!l)return;var show=!!home&&dmOn();l.style.display=show?"block":"none";if(show)dmStart();else dmStop()}
+function dmFlip(){try{localStorage.setItem("sopqa_dm",dmOn()?"0":"1")}catch(e){}goHome();toast(dmOn()?"弹幕已开":"弹幕已关")}
+</script>
 <main id="app"></main>
 <div style="max-width:980px;margin:26px auto 0;padding:0 16px;text-align:center;font-size:13px;color:var(--muted,#8a97a0)">参考链接：<a href="https://www.nhc.gov.cn/" target="_blank" rel="noopener" style="color:var(--primary,#0b6e8a);text-decoration:none">国家卫生健康委员会官网</a></div>
 <footer style="max-width:980px;margin:28px auto 44px;padding:0 16px;text-align:center;font-size:12px;line-height:1.8;color:var(--muted,#8a97a0)">免责声明：本题库依据国家卫健委《血液净化标准操作规程（2021版）》整理生成，仅供学习交流与备考参考，不构成诊疗或操作依据；内容如有错漏，请以原著及现行规范为准，临床操作请遵医嘱与科室制度。</footer>
@@ -136,7 +154,7 @@ function toast(msg,ms=1800){
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function pool(){return QA.filter(x=>S.role==='全部'||x.roles.includes(S.role))}
 function shuf(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function setHead(t,showBack){$('title').textContent=t;$('back').classList.toggle('hid',!showBack);window.scrollTo(0,0)}
+function setHead(t,showBack){$('title').textContent=t;$('back').classList.toggle('hid',!showBack);window.scrollTo(0,0);try{dmSync(!showBack)}catch(e){}}
 function toggleTheme(){
   const next=document.documentElement.getAttribute('data-theme')==='dark'?'':'dark';
   document.documentElement.setAttribute('data-theme',next);S.theme=next;save();
@@ -223,7 +241,7 @@ ${showInstall?`<div class="install-banner">
     <div class="big" onclick="importData()">导入进度</div>
     <div class="big" onclick="if(confirm('确认清空全部练习记录？')){S.m={};S.totalOk=0;save();goHome();toast('已重置')}">重置记录</div>
     <div class="big" onclick="showAbout()">关于 / 安装</div>
-    <div class="big empty">待添加</div>
+    <div class="big" onclick="dmFlip()">${dmLabel()}</div>
     <div class="big empty">待添加</div>
     <div class="big empty">待添加</div>
     <div class="big empty">待添加</div>
