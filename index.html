@@ -203,6 +203,7 @@ function goHome(){
   <div class="roles">${['医生','护士','技师','全部'].map(r=>`<div class="role ${S.role===r?'on':''}" onclick="S.role='${r}';save();goHome()">${r}</div>`).join('')}</div>
 </div>
 <div class="menu">
+  <button onclick="showCalc()" style="background:linear-gradient(135deg,#0b6e8a,#1494b8);color:#fff">🧮 透析计算器<small>超滤 · Kt/V · 配比</small></button>
   <button class="c1" onclick="daily()">📅 每日十题<small>优先错题与未做</small></button>
   <button class="c3" onclick="run(pool().filter(x=>S.m[x.id]===2),'错题本')">❌ 错题本<small>${wrong} 题待攻克</small></button>
   <button class="c2" onclick="showChapters()">📖 章节练习<small>29章系统刷</small></button>
