@@ -197,11 +197,7 @@ function goHome(){
   const showInstall=deferredPrompt&&!S.installDismissed&&!isStandalone();
   const offlineTag=!isOnline()?'<span class="offline-badge">离线</span>':'';
   app.innerHTML=`
-${showInstall?`<div class="install-banner">
-  <div style="flex:1"><b>添加到主屏幕</b><div style="font-size:12px;opacity:.9;margin-top:2px">安装后可像 App 一样打开，支持离线刷题</div></div>
-  <button onclick="doInstall()">安装</button>
-  <button onclick="dismissInstall()" style="background:rgba(255,255,255,.25);color:#fff;margin-left:4px">×</button>
-</div>`:''}
+
 <div class="card">
   <div class="sec">我的岗位 ${offlineTag}</div>
   <div class="roles">${['医生','护士','技师','全部'].map(r=>`<div class="role ${S.role===r?'on':''}" onclick="S.role='${r}';save();goHome()">${r}</div>`).join('')}</div>
