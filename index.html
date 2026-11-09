@@ -192,6 +192,7 @@ function goHome(){
   const ok=P.filter(x=>S.m[x.id]===1).length;
   const wrong=P.filter(x=>S.m[x.id]===2).length;
   const favN=Object.keys(S.f).length;
+  const newN=P.filter(x=>!S.m[x.id]).length;
   const pct=P.length?Math.round(ok/P.length*100):0;
   updateStreak();
   const showInstall=deferredPrompt&&!S.installDismissed&&!isStandalone();
@@ -210,6 +211,7 @@ function goHome(){
   <button class="c4" onclick="startExam()">📝 模拟考核<small>随机50题计时</small></button>
   <button class="c5" onclick="run(shuf(pool().filter(x=>x.type==='案例分析')),'案例分析')">🩺 案例分析<small>临床情景题</small></button>
   <button class="c6" onclick="run(pool().filter(x=>S.f[x.id]),'我的收藏')">⭐ 我的收藏<small>${favN} 题</small></button>
+  <button class="c2" onclick="run(pool().filter(x=>!S.m[x.id]),'未做题目')">🆕 未做题目<small>${newN} 题待扫盲</small></button>
 </div>
 <div class="card">
   <div class="sec">按难度练习</div>
