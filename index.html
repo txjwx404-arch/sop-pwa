@@ -101,16 +101,18 @@ mark{background:#ffe08a;color:#1a2332;border-radius:2px;padding:0 1px}
 <style>
 #dmLayer{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden;z-index:15}
 .dmspan{position:absolute;left:0;white-space:nowrap;font-size:13px;font-weight:600;color:var(--primary,#0b6e8a);opacity:.5;text-shadow:0 1px 2px rgba(255,255,255,.85);animation-name:dmfly;animation-timing-function:linear;will-change:transform}
+.dmspan.intro{opacity:.7;color:#8a6d1a}
 @keyframes dmfly{from{transform:translateX(100vw)}to{transform:translateX(calc(-100vw - 100%))}}
 </style>
 <div id="dmLayer" style="display:none"></div>
 <script>
 var DM_ITEMS=["透析液细菌＜100 CFU/mL，内毒素＜0.5 EU/mL","透析用水细菌每月查，内毒素每3个月查，频率别颠倒","上机前双人查对，参数与医嘱一致","自检未通过不上机，先通知技术人员","手卫生是感控的第一道防线","HDF＝弥散＋对流，清除中分子更强","低血压第一步：先停超滤","封管先回抽，看纱布上有没有血块","导管回血不畅，严禁强行推注","枸橼酸抗凝，别忘了算碱负荷","干体重靠评估，不靠猜","错题本里的题，才是最该刷的题","每日十题，贵在坚持","依据国家卫健委《血液净化标准操作规程（2021版）》","应知应会1000题，刷完就是底气","加油，今天也要稳稳上机"];
+var DM_INTRO=["佳木斯大学附属第一医院 · 血液净化中心","南北两院区 · 116 台透析机同时守护","超纯透析用水 · 为每一次治疗护航","规范操作记心间，质量安全大于天","以肾友为中心，做有温度的血液净化","应知应会天天练，理论实践两手抓"];
 var DM_LANES=[98,124,226,250];
 var dmIdx=0,dmTimer=null;
 function dmOn(){try{return localStorage.getItem("sopqa_dm")!=="0"}catch(e){return true}}
 function dmLabel(){return dmOn()?"弹幕：开":"弹幕：关"}
-function dmSpawn(){var l=document.getElementById("dmLayer");if(!l||l.style.display==="none")return;var sp=document.createElement("span");sp.className="dmspan";sp.textContent=DM_ITEMS[dmIdx%DM_ITEMS.length];dmIdx++;sp.style.top=DM_LANES[dmIdx%DM_LANES.length]+"px";sp.style.animationDuration="15s";sp.addEventListener("animationend",function(){sp.remove()});l.appendChild(sp)}
+function dmSpawn(){var l=document.getElementById("dmLayer");if(!l||l.style.display==="none")return;var intro=false;try{intro=localStorage.getItem("sopqa_intro")!=="1"}catch(e){}var list=intro?DM_INTRO:DM_ITEMS;var sp=document.createElement("span");sp.className=intro?"dmspan intro":"dmspan";sp.textContent=list[dmIdx%list.length];dmIdx++;sp.style.top=DM_LANES[dmIdx%DM_LANES.length]+"px";sp.style.animationDuration="15s";sp.addEventListener("animationend",function(){sp.remove()});l.appendChild(sp);if(intro&&dmIdx>=list.length){try{localStorage.setItem("sopqa_intro","1")}catch(e){}dmIdx=0}}
 function dmStart(){if(dmTimer)return;dmSpawn();dmTimer=setInterval(dmSpawn,3000)}
 function dmStop(){if(dmTimer){clearInterval(dmTimer);dmTimer=null}var l=document.getElementById("dmLayer");if(l)l.innerHTML=""}
 function dmSync(home){var l=document.getElementById("dmLayer");if(!l)return;var show=!!home&&dmOn();l.style.display=show?"block":"none";if(show)dmStart();else dmStop()}
