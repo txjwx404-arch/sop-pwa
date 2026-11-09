@@ -76,7 +76,7 @@ input:focus,select:focus{border-color:var(--primary)}
 .timer{font-variant-numeric:tabular-nums;font-weight:600;color:#fff;background:rgba(0,0,0,.22);padding:3px 9px;border-radius:7px;font-size:13px}
 .sec{font-size:12.5px;color:var(--muted);margin-bottom:7px;font-weight:500}
 .grid2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.big{border:1.5px solid var(--line);background:var(--card);border-radius:11px;padding:11px 2px;text-align:center;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.big{border:1.5px solid var(--line);background:var(--card);border-radius:11px;padding:11px 2px;text-align:center;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .big.empty{border-style:dashed;color:var(--muted,#8a97a0);font-weight:500;cursor:default;background:transparent}
 .big:active{opacity:.85}
 mark{background:#ffe08a;color:#1a2332;border-radius:2px;padding:0 1px}
@@ -210,9 +210,9 @@ ${showInstall?`<div class="install-banner">
 <div class="card">
   <div class="sec">按难度练习</div>
   <div class="grid2">
-    <div class="big" onclick="run(pool().filter(x=>x.level==='基础'),'基础题')">基础 · ${pool().filter(x=>x.level==='基础').length}</div>
-    <div class="big" onclick="run(pool().filter(x=>x.level==='进阶'),'进阶题')">进阶 · ${pool().filter(x=>x.level==='进阶').length}</div>
-    <div class="big" onclick="run(pool().filter(x=>x.level==='高级'),'高级题')">高级 · ${pool().filter(x=>x.level==='高级').length}</div>
+    <div class="big" onclick="run(pool().filter(x=>x.level==='基础'),'基础题')">基础</div>
+    <div class="big" onclick="run(pool().filter(x=>x.level==='进阶'),'进阶题')">进阶</div>
+    <div class="big" onclick="run(pool().filter(x=>x.level==='高级'),'高级题')">高级</div>
     <div class="big" onclick="openCustom()">自定义练习</div>
   </div>
 </div>
